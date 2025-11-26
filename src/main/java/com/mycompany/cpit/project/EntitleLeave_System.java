@@ -92,6 +92,13 @@ public class EntitleLeave_System {
 
             System.out.print("Enter Employee Name: ");
             String name = in.nextLine();
+            
+            // ____ Validate name letters only ____
+        if (!isValidName(name)) {
+              System.out.println("Invalid name, Only letters are allowed.");
+              return; 
+          }
+
 
             System.out.print("Enter Department: ");
             String dept = in.nextLine();
@@ -167,6 +174,24 @@ public class EntitleLeave_System {
 
             System.out.print("Enter new joining date (or leave empty): ");
             String join = in.nextLine();
+            
+            if ((name == null || name.isEmpty()) && (dept == null || dept.isEmpty()) && (join == null || join.isEmpty())) {
+
+             System.out.println("There are no updates. Employee information was not changed.");
+              return;
+            }
+
+             // ____ Validate date format ___
+        if (!join.isEmpty() && !isValidDateFormat(join)) {
+            System.out.println("Invalid date format. Please use (YYYY-MM-DD).");
+            return;
+        }
+
+        // ____ Validate name letters ____
+        if (!name.isEmpty() && !isValidName(name)) {
+            System.out.println("Invalid name, Only letters are allowed.");
+            return;
+        }
 
             system.update_Employee(id, name, dept, join);
             System.out.println("Employee updated successfully.");
@@ -290,5 +315,24 @@ public class EntitleLeave_System {
                 );
             }
         }
+    }
+    
+     //  method to validate the name contains only letters and spaces
+    private static boolean isValidName(String name) {
+
+        if (name == null || name.isEmpty()) {
+            return false;
+        }
+
+        // check every character
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+
+            if (!Character.isLetter(c) && c != ' ') {
+                return false;   
+            }
+        }
+
+        return true; 
     }
 }
