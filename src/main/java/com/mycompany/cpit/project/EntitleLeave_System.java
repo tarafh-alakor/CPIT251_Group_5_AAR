@@ -75,7 +75,7 @@ public class EntitleLeave_System {
         Employee e1 = new Employee("E1", "Mawadda", "IT", "2023-09-01");
         Employee e2 = new Employee("E2", "Amal", "HR", "2022-03-10");
 
-        systemزadd_Employee(e1, 20);
+        system.add_Employee(e1, 20);
         system.add_Employee(e2, 25);
 
         system.createLeaveRequestForDemo(
