@@ -5,6 +5,8 @@
 package com.mycompany.cpit.project;
 
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class HR_System {
 
@@ -12,6 +14,8 @@ public class HR_System {
     private ArrayList<LeaveBalance> leaveBalances = new ArrayList<>();
     private ArrayList<LeaveRequest> leaveRequests = new ArrayList<>();
     private int nextRequestId = 1;
+    private ArrayList<Contract> contracts = new ArrayList<>();
+    private int nextContractId = 1;
 
     // Add employee and create initial leave balance
     public void add_Employee(Employee employee, int annualEntitlement) {
@@ -166,6 +170,59 @@ public class HR_System {
         for (LeaveRequest r : leaveRequests) {
             if (r.getRequestId() == requestId) {
                 return r;
+            }
+        }
+        return null;
+    }
+    public Contract addOrUpdateContract(String employeeId,
+                                        String startDate,
+                                        String endDate,
+                                        int remainingDays,
+                                        String documentPath) {
+
+        Employee emp = findEmployeeById(employeeId);
+        if (emp == null) {
+            throw new IllegalArgumentException("Employee not found");
+        }
+
+        Contract existing = findContractByEmployee(employeeId);
+        if (existing == null) {
+            Contract c = new Contract(nextContractId,
+                                      employeeId,
+                                      startDate,
+                                      endDate,
+                                      remainingDays,
+                                      documentPath);
+            contracts.add(c);
+            nextContractId++;
+            return c;
+        } else {
+            existing.setStartDate(startDate);
+            existing.setEndDate(endDate);
+            existing.setRemainingDays(remainingDays);
+            existing.setDocumentPath(documentPath);
+            return existing;
+        }
+    }
+
+    public ArrayList<Contract> getAllContracts() {
+        return contracts;
+    }
+
+    public ArrayList<Contract> getContractsNearExpiry() {
+        ArrayList<Contract> result = new ArrayList<>();
+        for (Contract c : contracts) {
+            if (c.isNearExpiry()) {
+                result.add(c);
+            }
+        }
+        return result;
+    }
+
+    private Contract findContractByEmployee(String employeeId) {
+        for (Contract c : contracts) {
+            if (c.getEmployeeId().equals(employeeId)) {
+                return c;
             }
         }
         return null;
