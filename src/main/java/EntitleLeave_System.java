@@ -1,4 +1,4 @@
-
+//Main class
 import java.util.Scanner;
 
 public class EntitleLeave_System {

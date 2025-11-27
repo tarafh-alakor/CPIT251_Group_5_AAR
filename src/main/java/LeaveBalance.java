@@ -4,7 +4,7 @@ public class LeaveBalance {
     private String employeeId;
     private int annualEntitlement; // the total leave days allowed per year
     private int takenDays;         // the leave days that are already taken
-
+    //Constructor:
     public LeaveBalance(String employeeId, int annualEntitlement, int takenDays) {
         if (employeeId == null || employeeId.isEmpty() || annualEntitlement < 0) {
             throw new IllegalArgumentException("Invalid leave balance data");

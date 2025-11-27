@@ -5,7 +5,7 @@ public class Employee {
     private String name;
     private String department;
     private String joiningDate; // YYYY-MM-DD
-
+    //Constructor:
     public Employee(String id, String name, String department, String joiningDate) {
         if (id == null || id.isEmpty() || name == null || name.isEmpty() || department == null
                 || department.isEmpty() || joiningDate == null || joiningDate.isEmpty()) {

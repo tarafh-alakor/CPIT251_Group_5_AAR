@@ -1,6 +1,11 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.cpit.project;
 
 public class LeaveRequest {
-    
+
     private int requestId;
     private String employeeId;
     private String leaveType;
@@ -8,17 +13,25 @@ public class LeaveRequest {
     private String toDate;
     private int daysRequested;
     private String reason;
-    private String status;
-    //Constructor:
-    public LeaveRequest(int requestId, String employeeId, String leaveType, String fromDate, String toDate, int daysRequested, String reason, String status) {
+    private String status; // PENDING, APPROVED, REJECTED
+
+    public LeaveRequest(int requestId,
+                        String employeeId,
+                        String leaveType,
+                        String fromDate,
+                        String toDate,
+                        int daysRequested,
+                        String reason) {
+
         if (employeeId == null || employeeId.isEmpty()
                 || leaveType == null || leaveType.isEmpty()
                 || fromDate == null || fromDate.isEmpty()
                 || toDate == null || toDate.isEmpty()
                 || daysRequested <= 0
                 || reason == null || reason.isEmpty()) {
-            throw new IllegalArgumentException("Invalid leave request data");
+            throw new IllegalArgumentException("All leave request fields are mandatory");
         }
+
         this.requestId = requestId;
         this.employeeId = employeeId;
         this.leaveType = leaveType;
@@ -26,7 +39,7 @@ public class LeaveRequest {
         this.toDate = toDate;
         this.daysRequested = daysRequested;
         this.reason = reason;
-        this.status = "PENDING"; //The default status
+        this.status = "PENDING";
     }
 
     public int getRequestId() {
@@ -68,4 +81,19 @@ public class LeaveRequest {
     public void reject() {
         this.status = "REJECTED";
     }
+
+    @Override
+    public String toString() {
+        return "LeaveRequest{"
+                + "requestId=" + requestId
+                + ", employeeId='" + employeeId + '\''
+                + ", leaveType='" + leaveType + '\''
+                + ", fromDate='" + fromDate + '\''
+                + ", toDate='" + toDate + '\''
+                + ", daysRequested=" + daysRequested
+                + ", reason='" + reason + '\''
+                + ", status='" + status + '\''
+                + '}';
+    }
 }
+
