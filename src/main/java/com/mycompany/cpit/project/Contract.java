@@ -57,7 +57,7 @@ public class Contract {
 
     public long getRemainingDays() {
         LocalDate today = LocalDate.now();
-        return getRemainingDaysFrom(today);
+       return getRemainingDaysFrom(today);
 }
 
      public int getRemainingDaysFrom(LocalDate today) {
@@ -108,6 +108,6 @@ public class Contract {
     @Override
     public String toString() {
         return "Contract{" + "contractId=" + contractId + ", employeeId='" + employeeId + '\'' + ", startDate='" + startDate + '\''
-                + ", endDate='" + endDate + '\'' + ", remainingDays=" + remainingDays + ", documentPath='" + documentPath + '\'' + '}';
+                + ", endDate='" + endDate + '\'' + ", remainingDays=" + getRemainingDays() + ", documentPath='" + documentPath + '\'' + '}';
     }
 }

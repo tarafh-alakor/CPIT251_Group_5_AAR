@@ -184,7 +184,7 @@ public ArrayList<LeaveRequest> getLeaveRequests() {
 
     // ______ contract _____
     
-    public Contract addOrUpdateContract(int contractId, String employeeId, 
+    public Contract addOrUpdateContract(String employeeId, 
             String startDate,
             String endDate,
             String documentPath) {

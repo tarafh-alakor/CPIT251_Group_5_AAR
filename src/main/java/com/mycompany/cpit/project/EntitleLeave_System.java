@@ -18,7 +18,7 @@ public class EntitleLeave_System {
         seedDemoData(system);
          boolean exit = false;
         while (!exit) {
-            System.out.println("\n===== HR System - Sprint 1 =====");
+            System.out.println("\n===== HR System =====");
             System.out.println("1. Add Employee");
             System.out.println("2. Update Employee Information");
             System.out.println("3. Search / View Employee");
@@ -101,8 +101,8 @@ public class EntitleLeave_System {
         
 
         // Add demo contracts
-        system.addOrUpdateContract(1,"E1", "2023-09-01", "2024-09-01", "path/to/document1");
-        system.addOrUpdateContract(2,"E2", "2022-03-10", "2025-03-10", "path/to/document2");
+        system.addOrUpdateContract("E1", "2023-09-01", "2024-09-01", "path/to/document1");
+        system.addOrUpdateContract("E2", "2022-03-10", "2025-03-10", "path/to/document2");
     }
 
     // Add employee with validation
@@ -358,8 +358,6 @@ public class EntitleLeave_System {
     }
      private static void handleAddContract(HR_System system, Scanner in) {
         try {
-            System.out.print("Enter contract ID: ");
-            int contractId = in.nextInt();
             
             System.out.print("Enter Employee ID: ");
             String employeeId = in.nextLine();
@@ -375,7 +373,7 @@ public class EntitleLeave_System {
             String documentPath = in.nextLine();
 
             // Create contract for the employee
-            Contract contract = system.addOrUpdateContract(contractId, employeeId, startDate, endDate, documentPath);
+            Contract contract = system.addOrUpdateContract( employeeId, startDate, endDate, documentPath);
             System.out.println("Contract added/updated successfully: " + contract);
         } catch (Exception e) {
             System.out.println("Error while adding contract: " + e.getMessage());
