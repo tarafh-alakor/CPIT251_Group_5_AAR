@@ -182,10 +182,11 @@ public ArrayList<LeaveRequest> getLeaveRequests() {
         return null;
     }
 
-    public Contract addOrUpdateContract(String employeeId,
+    // ______ contract _____
+    
+    public Contract addOrUpdateContract(int contractId, String employeeId, 
             String startDate,
             String endDate,
-            int remainingDays,
             String documentPath) {
 
         Employee emp = findEmployeeById(employeeId);
@@ -199,7 +200,6 @@ public ArrayList<LeaveRequest> getLeaveRequests() {
                     employeeId,
                     startDate,
                     endDate,
-                    remainingDays,
                     documentPath);
             contracts.add(c);
             nextContractId++;
@@ -207,7 +207,6 @@ public ArrayList<LeaveRequest> getLeaveRequests() {
         } else {
             existing.setStartDate(startDate);
             existing.setEndDate(endDate);
-            existing.setRemainingDays(remainingDays);
             existing.setDocumentPath(documentPath);
             return existing;
         }
@@ -217,19 +216,18 @@ public ArrayList<LeaveRequest> getLeaveRequests() {
         return contracts;
     }
 
-    //(هنا في غلط)
     public ArrayList<Contract> getContractsNearExpiry() {
-        ArrayList<Contract> result = new ArrayList<>();
-        LocalDate today = LocalDate.now();  // Get today's date
-        for (Contract c : contracts) {
-            LocalDate expiryDate = LocalDate.parse(c.getEndDate());  // Convert expiry date to LocalDate
-            // Ensure the contract is within 90 days of expiry from today
-            if (!expiryDate.isBefore(today) && expiryDate.isBefore(today.plusDays(90))) {
-                result.add(c);
-            }
+    ArrayList<Contract> result = new ArrayList<>();
+
+    LocalDate today = LocalDate.now();
+
+    for (Contract c : contracts) {
+        if (c.isNearExpiry(today)) {
+            result.add(c);
         }
-        return result;
     }
+    return result;
+}
 
     private Contract findContractByEmployee(String employeeId) {
         for (Contract c : contracts) {

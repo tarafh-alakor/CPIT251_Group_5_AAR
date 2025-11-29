@@ -47,8 +47,8 @@ public class ReportServiceTest {
         ReportService s = new ReportService();
 
         ArrayList<Contract> list = new ArrayList<>();
-        list.add(new Contract(1,"E1","2025-01-01","2025-04-10",60,"c1.pdf"));
-        list.add(new Contract(2,"E2","2025-01-01","2025-11-10",200,"c2.pdf"));
+        list.add(new Contract(1,"E1","2025-01-01","2025-04-10","c1.pdf"));
+        list.add(new Contract(2,"E2","2025-01-01","2025-11-10","c2.pdf"));
 
         // in range
         String r1 = s.generateContractExpiryReport(list,"2025-03-01","2025-06-01");

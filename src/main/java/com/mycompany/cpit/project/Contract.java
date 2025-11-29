@@ -5,6 +5,7 @@
 package com.mycompany.cpit.project;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 /**
  *
@@ -19,7 +20,7 @@ public class Contract {
     private int remainingDays;   
     private String documentPath; 
 
-    public Contract(int contractId, String employeeId, String startDate, String endDate, int remainingDays, String documentPath) {
+    public Contract(int contractId, String employeeId, String startDate, String endDate, String documentPath) {
 
         if (employeeId == null || employeeId.isEmpty()) {
             throw new IllegalArgumentException("employeeId cannot be empty");
@@ -35,7 +36,6 @@ public class Contract {
         this.employeeId = employeeId;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.remainingDays = remainingDays;
         this.documentPath = documentPath;
     }
 
@@ -55,10 +55,22 @@ public class Contract {
         return endDate;
     }
 
-    public int getRemainingDays() {
-        return remainingDays;
-    }
+    public long getRemainingDays() {
+        LocalDate today = LocalDate.now();
+        return getRemainingDaysFrom(today);
+}
 
+     public int getRemainingDaysFrom(LocalDate today) {
+        LocalDate end = LocalDate.parse(endDate);
+
+        if (end.isBefore(today)) {
+            return 0;
+        }
+
+        long diff = ChronoUnit.DAYS.between(today, end);
+        return (int) diff;
+    }
+     
     public String getDocumentPath() {
         return documentPath;
     }
@@ -86,17 +98,10 @@ public class Contract {
         this.documentPath = documentPath;
     }
 
-    //(هنا في غلط)
-    public boolean isNearExpiry() {
-    LocalDate today = LocalDate.now();  // Get today's date
-    LocalDate expiryDate = LocalDate.parse(this.endDate);  // Convert expiry date string to LocalDate
-
-    // Print debug information to see today's date and the expiry date
-    System.out.println("Today's date: " + today);
-    System.out.println("Contract expiry date: " + expiryDate);
-
-    // Check if the expiry date is within the next 90 days from today, including today
-    return !expiryDate.isBefore(today) && !expiryDate.isAfter(today.plusDays(90));
+    public boolean isNearExpiry(LocalDate today) {
+    LocalDate end = LocalDate.parse(endDate);
+    long days = ChronoUnit.DAYS.between(today, end);
+    return days >= 0 && days <= 90;  
 }
 
 

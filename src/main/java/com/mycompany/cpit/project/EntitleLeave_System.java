@@ -101,8 +101,8 @@ public class EntitleLeave_System {
         
 
         // Add demo contracts
-        system.addOrUpdateContract("E1", "2023-09-01", "2024-09-01", 30, "path/to/document1");
-        system.addOrUpdateContract("E2", "2022-03-10", "2025-03-10", 45, "path/to/document2");
+        system.addOrUpdateContract(1,"E1", "2023-09-01", "2024-09-01", "path/to/document1");
+        system.addOrUpdateContract(2,"E2", "2022-03-10", "2025-03-10", "path/to/document2");
     }
 
     // Add employee with validation
@@ -358,6 +358,9 @@ public class EntitleLeave_System {
     }
      private static void handleAddContract(HR_System system, Scanner in) {
         try {
+            System.out.print("Enter contract ID: ");
+            int contractId = in.nextInt();
+            
             System.out.print("Enter Employee ID: ");
             String employeeId = in.nextLine();
 
@@ -367,15 +370,12 @@ public class EntitleLeave_System {
             System.out.print("Enter Contract End Date (YYYY-MM-DD): ");
             String endDate = in.nextLine();
 
-            System.out.print("Enter Remaining Days: ");
-            int remainingDays = in.nextInt();
-            in.nextLine(); // clear newline
 
             System.out.print("Enter Document Path: ");
             String documentPath = in.nextLine();
 
             // Create contract for the employee
-            Contract contract = system.addOrUpdateContract(employeeId, startDate, endDate, remainingDays, documentPath);
+            Contract contract = system.addOrUpdateContract(contractId, employeeId, startDate, endDate, documentPath);
             System.out.println("Contract added/updated successfully: " + contract);
         } catch (Exception e) {
             System.out.println("Error while adding contract: " + e.getMessage());

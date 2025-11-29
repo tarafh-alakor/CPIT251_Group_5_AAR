@@ -7,6 +7,7 @@ package com.mycompany.cpit.project;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -190,14 +191,18 @@ public class HR_SystemTest {
         HR_System system = new HR_System();
         system.add_Employee(createEmployee("E001", "Tarfa"), 20);
 
-        Contract contract = system.addOrUpdateContract("E001", "2024-01-01", "2024-12-31", 30, "path/to/contract");
+        Contract contract = system.addOrUpdateContract(1,"E001", "2024-01-01", "2024-12-31", "path/to/contract");
 
         // Check that the contract was added
+        
         assertNotNull(contract);
+        assertEquals(1, contract.getContractId());
         assertEquals("E001", contract.getEmployeeId());
+        assertEquals("2024-01-01", contract.getStartDate());
         assertEquals("2024-12-31", contract.getEndDate());
-        assertEquals(30, contract.getRemainingDays());
+        assertEquals("path/to/contract", contract.getDocumentPath());
     }
+       
 
 // ---------- testAddOrUpdateContractUpdatesExistingContract ----------
     @Test
@@ -206,17 +211,16 @@ public class HR_SystemTest {
         system.add_Employee(createEmployee("E001", "Tarfa"), 20);
 
         // Add contract first
-        system.addOrUpdateContract("E001", "2024-01-01", "2024-06-30", 30, "path/to/contract");
+        system.addOrUpdateContract(1,"E001", "2024-01-01", "2024-06-30", "path/to/contract");
 
         // Update contract
-        Contract updatedContract = system.addOrUpdateContract("E001", "2024-07-01", "2024-12-31", 20, "path/to/updatedContract");
+        Contract updatedContract = system.addOrUpdateContract(1,"E001", "2024-07-01", "2024-12-31", "path/to/updatedContract");
 
         // Verify the contract was updated
         assertEquals("2024-12-31", updatedContract.getEndDate());
-        assertEquals(20, updatedContract.getRemainingDays());
         assertEquals("path/to/updatedContract", updatedContract.getDocumentPath());
     }
-
+   
 // ---------- testGetAllContracts ----------
     @Test
     public void testGetAllContracts() {
@@ -225,8 +229,8 @@ public class HR_SystemTest {
         system.add_Employee(createEmployee("E002", "Tareq"), 20);
 
         // Add contracts for both employees
-        system.addOrUpdateContract("E001", "2024-01-01", "2024-06-30", 30, "path/to/contract");
-        system.addOrUpdateContract("E002", "2024-07-01", "2024-12-31", 20, "path/to/contract");
+        system.addOrUpdateContract(1,"E001", "2024-01-01", "2024-06-30", "path/to/contract");
+        system.addOrUpdateContract(2,"E002", "2024-07-01", "2024-12-31", "path/to/contract");
 
         // Get all contracts and verify the size
         ArrayList<Contract> contracts = system.getAllContracts();
@@ -238,25 +242,22 @@ public class HR_SystemTest {
     public void testGetContractsNearExpiry() {
         HR_System system = new HR_System();
         system.add_Employee(createEmployee("E001", "Tarfa"), 20);
-
+        system.add_Employee(createEmployee("E002", "Amal"), 20);
+        system.add_Employee(createEmployee("E003", "Mawadda"), 20);
+        LocalDate today = LocalDate.now();
+        
         // Add contracts
-        system.addOrUpdateContract("E001", "2024-01-01", "2026-02-25", 30, "path/to/contract");  // Expected near expiry
-        system.addOrUpdateContract("E001", "2024-07-01", "2026-06-30", 60, "path/to/contract");  // Not near expiry
-        system.addOrUpdateContract("E001", "2023-01-01", "2024-06-30", 30, "path/to/expired_contract"); // Already expired
+        system.addOrUpdateContract(1,"E001", today.toString(),today.plusDays(90).toString(), "path/to/near_expiry_contract");  // Expected near expiry
+        system.addOrUpdateContract(1,"E002", today.toString(),today.plusDays(100).toString(), "path/to/contract");  // Not near expiry
+        system.addOrUpdateContract(1,"E003", today.toString(),today.minusDays(5).toString(), "path/to/expired_contract"); // Already expired
 
-        // Print all contracts for debugging
-        System.out.println("Contracts added:");
-        for (Contract contract : system.getAllContracts()) {
-            System.out.println("Employee ID: " + contract.getEmployeeId() + ", Expiry Date: " + contract.getEndDate());
-        }
-
-        // Get contracts near expiry (assuming near expiry means within 90 days from today)
         ArrayList<Contract> contractsNearExpiry = system.getContractsNearExpiry();
-
-        // Only the first contract should be near expiry (2026-02-25)
-        assertEquals(1, contractsNearExpiry.size());  // We expect 1 contract near expiry
-        assertEquals("E001", contractsNearExpiry.get(0).getEmployeeId());
-        assertEquals("2026-02-25", contractsNearExpiry.get(0).getEndDate());  // Check the expiry date
+        
+        assertEquals(1, contractsNearExpiry.size());
+        Contract c = contractsNearExpiry.get(0);
+        assertEquals("E001", c.getEmployeeId());
+        assertEquals(today.plusDays(90).toString(), c.getEndDate());
+    
     }
 
     // ---------- generateEmployeeReport ----------
@@ -279,7 +280,7 @@ public class HR_SystemTest {
         HR_System system = new HR_System();
         system.add_Employee(createEmployee("E001", "Tarfa"), 20);
 
-        system.addOrUpdateContract("E001", "2024-01-01", "2024-06-01", 10, "path/to/contract");
+        system.addOrUpdateContract(1,"E001","2024-01-01","2024-06-01","path/to/contract");
 
         String report = system.generateContractExpiryReport("2024-01-01", "2024-06-30");
 
