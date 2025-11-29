@@ -68,6 +68,13 @@ public class HR_System {
         }
         return result;
     }
+    public ArrayList<Employee> getEmployees() {
+    return employees;
+}
+public ArrayList<LeaveRequest> getLeaveRequests() {
+    return leaveRequests;
+}
+
 
     // Get available leave days for an employee
     public int getAvailableLeave(String employeeId) {

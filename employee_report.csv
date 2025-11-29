@@ -1,0 +1,4 @@
+Leave Report
+-----------------
+LeaveRequest{requestId=1, employeeId='E1', leaveType='Annual', fromDate='2025-01-10', toDate='2025-01-12', daysRequested=3, reason='Family trip', status='PENDING'}
+LeaveRequest{requestId=2, employeeId='E2', leaveType='Sick', fromDate='2025-02-05', toDate='2025-02-06', daysRequested=2, reason='Flu', status='PENDING'}

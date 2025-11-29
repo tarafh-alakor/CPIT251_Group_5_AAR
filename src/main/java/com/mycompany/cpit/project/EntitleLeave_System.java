@@ -3,6 +3,7 @@
  */
 
 package com.mycompany.cpit.project;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -15,8 +16,7 @@ public class EntitleLeave_System {
 
         // Load demo employees and demo leave requests
         seedDemoData(system);
-
-        boolean exit = false;
+         boolean exit = false;
         while (!exit) {
             System.out.println("\n===== HR System - Sprint 1 =====");
             System.out.println("1. Add Employee");
@@ -25,6 +25,10 @@ public class EntitleLeave_System {
             System.out.println("4. View Employee Leave Entitlement");
             System.out.println("5. Approve / Reject Leave Request");
             System.out.println("6. View Leave History for Employee");
+            System.out.println("7. Add/update Contract");
+            System.out.println("8. View Contract Details");
+            System.out.println("9. View Contracts Near Expiry");
+            System.out.println("10. Generate Reports (Employee, Contract Expiry, Leave)");
             System.out.println("0. Exit");
             System.out.print("Enter choice: ");
 
@@ -58,6 +62,18 @@ public class EntitleLeave_System {
                 case 6:
                     handleViewLeaveHistory(system, in);
                     break;
+                case 7:
+                    handleAddContract(system, in);
+                    break;
+                case 8:
+                    handleViewContractDetails(system, in);
+                    break;
+                case 9:
+                    handleViewContractsNearExpiry(system);
+                    break;
+                case 10:
+                    generateReports(system, in);
+                    break;
                 case 0:
                     exit = true;
                     System.out.println("Exiting Sprint 1...");
@@ -70,9 +86,9 @@ public class EntitleLeave_System {
         in.close();
     }
 
-    // Load demo employees and demo leave requests
+    // Load demo employees, leave requests, and contracts
     private static void seedDemoData(HR_System system) {
-        Employee e1 = new Employee("E1", "Mawadda", "IT", "2023-09-01");
+        Employee e1 = new Employee("E1", "Ghaida", "IT", "2023-09-01");
         Employee e2 = new Employee("E2", "Amal", "HR", "2022-03-10");
 
         system.add_Employee(e1, 20);
@@ -82,6 +98,11 @@ public class EntitleLeave_System {
                 "E1", "Annual", "2025-01-10", "2025-01-12", 3, "Family trip");
         system.createLeaveRequestForDemo(
                 "E2", "Sick", "2025-02-05", "2025-02-06", 2, "Flu");
+        
+
+        // Add demo contracts
+        system.addOrUpdateContract("E1", "2023-09-01", "2024-09-01", 30, "path/to/document1");
+        system.addOrUpdateContract("E2", "2022-03-10", "2025-03-10", 45, "path/to/document2");
     }
 
     // Add employee with validation
@@ -335,4 +356,125 @@ public class EntitleLeave_System {
 
         return true; 
     }
+     private static void handleAddContract(HR_System system, Scanner in) {
+        try {
+            System.out.print("Enter Employee ID: ");
+            String employeeId = in.nextLine();
+
+            System.out.print("Enter Contract Start Date (YYYY-MM-DD): ");
+            String startDate = in.nextLine();
+
+            System.out.print("Enter Contract End Date (YYYY-MM-DD): ");
+            String endDate = in.nextLine();
+
+            System.out.print("Enter Remaining Days: ");
+            int remainingDays = in.nextInt();
+            in.nextLine(); // clear newline
+
+            System.out.print("Enter Document Path: ");
+            String documentPath = in.nextLine();
+
+            // Create contract for the employee
+            Contract contract = system.addOrUpdateContract(employeeId, startDate, endDate, remainingDays, documentPath);
+            System.out.println("Contract added/updated successfully: " + contract);
+        } catch (Exception e) {
+            System.out.println("Error while adding contract: " + e.getMessage());
+        }
+    }
+
+    // Handle viewing contract details
+    private static void handleViewContractDetails(HR_System system, Scanner in) {
+        try {
+            System.out.print("Enter Employee ID to view contract: ");
+            String employeeId = in.nextLine();
+            Contract contract = system.getAllContracts().stream()
+                    .filter(c -> c.getEmployeeId().equals(employeeId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (contract != null) {
+                System.out.println(contract);
+            } else {
+                System.out.println("No contract found for employee " + employeeId);
+            }
+        } catch (Exception e) {
+            System.out.println("Error while viewing contract details: " + e.getMessage());
+        }
+    }
+
+    // Handle viewing contracts near expiry
+    private static void handleViewContractsNearExpiry(HR_System system) {
+        try {
+            ArrayList<Contract> contractsNearExpiry = system.getContractsNearExpiry();
+            if (contractsNearExpiry.isEmpty()) {
+                System.out.println("No contracts near expiry.");
+            } else {
+                System.out.println("\n===== Contracts Near Expiry =====");
+                for (Contract c : contractsNearExpiry) {
+                    System.out.println(c);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error while viewing contracts near expiry: " + e.getMessage());
+        }
+    }
+   // Generate reports based on the user's choice
+    private static void generateReports(HR_System system, Scanner in) {
+        System.out.println("Choose report type:");
+        System.out.println("1. Employee Report");
+        System.out.println("2. Contract Expiry Report");
+        System.out.println("3. Leave Report");
+        System.out.print("Enter choice: ");
+
+        int reportChoice = in.nextInt();
+        in.nextLine(); // clear leftover newline
+
+        ReportService reportService = new ReportService();
+        String report = "";
+
+        switch (reportChoice) {
+            case 1:
+                report = reportService.generateEmployeeReport(system.getEmployees());
+                System.out.println(report);
+                break;
+            case 2:
+                System.out.print("Enter from date (YYYY-MM-DD): ");
+                String fromDate = in.nextLine();
+                System.out.print("Enter to date (YYYY-MM-DD): ");
+                String toDate = in.nextLine();
+                report = reportService.generateContractExpiryReport(system.getAllContracts(), fromDate, toDate);
+                System.out.println(report);
+                break;
+            case 3:
+                System.out.print("Enter from date (YYYY-MM-DD): ");
+                String leaveFromDate = in.nextLine();
+                System.out.print("Enter to date (YYYY-MM-DD): ");
+                String leaveToDate = in.nextLine();
+                report = reportService.generateLeaveReport(system.getLeaveRequests(), leaveFromDate, leaveToDate);
+                System.out.println(report);
+                break;
+            default:
+                System.out.println("Invalid report choice.");
+        }
+
+        // Ask user if they want to export the report
+        System.out.println("Do you want to export the report?");
+        System.out.println("1. Yes");
+        System.out.println("2. No");
+        System.out.print("Enter choice: ");
+        int exportChoice = in.nextInt();
+        in.nextLine(); // clear leftover newline
+
+        if (exportChoice == 1) {
+            System.out.print("Enter file name (with extension): ");
+            String fileName = in.nextLine();
+            try {
+                reportService.exportToCsv(report, fileName);
+                System.out.println("Report exported to " + fileName);
+            } catch (IOException e) {
+                System.out.println("Error exporting report: " + e.getMessage());
+            }
+        }
+    }
 }
+
